@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Apurv Satish Bagadi — AI/ML, Full Stack and Software Developer Portfolio">
+<title>Apurv Satish Bagadi | AI • Full Stack • Software</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+  html{scroll-behavior:smooth}
+  body{margin:0;background:#02050b;color:#eef4ff;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-x:hidden}
+  *{box-sizing:border-box}
+  .glass{background:rgba(4,13,27,.62);border:1px solid rgba(67,220,255,.18);box-shadow:0 20px 70px rgba(0,0,0,.28);backdrop-filter:blur(16px)}
+  .grid-bg{background-image:linear-gradient(rgba(75,120,190,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(75,120,190,.07) 1px,transparent 1px);background-size:50px 50px}
+  .glow{box-shadow:0 0 50px rgba(47,128,255,.22)}
+  .gradient-text{background:linear-gradient(90deg,#ffffff,#48d9ff,#6b7cff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .orb{position:absolute;border-radius:999px;filter:blur(80px);pointer-events:none}
+  .reveal{opacity:0;transform:translateY(25px);transition:opacity .8s ease,transform .8s ease}
+  .reveal.show{opacity:1;transform:none}
+  .tilt{transform-style:preserve-3d;transition:transform .2s ease,box-shadow .2s ease}
+  .tilt:hover{box-shadow:0 30px 80px rgba(22,116,255,.16)}
+  .tag{border:1px solid rgba(125,180,255,.18);background:rgba(71,129,220,.08)}
+  #scene{position:absolute;inset:0;width:100%;height:100%}
+  .scan{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,179,255,.65),transparent);animation:scan 5s linear infinite;opacity:.35}
+  @keyframes scan{0%{top:10%}100%{top:90%}}
+  .navlink{color:#9eacc5;transition:.2s}.navlink:hover{color:#fff}
+  .timeline-line{background:linear-gradient(#4f9cff,transparent)}
+  @media(max-width:768px){.hero-title{font-size:3.2rem}.desktop-nav{display:none}}
+
+.hud{position:absolute;right:7%;top:28%;z-index:3;width:210px;padding:14px;border:1px solid rgba(72,214,255,.22);background:rgba(0,15,30,.35);backdrop-filter:blur(10px);font:11px/1.8 monospace;color:#78dfff;letter-spacing:.12em;box-shadow:0 0 35px rgba(0,180,255,.08)}
+.hud b{color:#e8fbff}.hud .bar{height:3px;background:linear-gradient(90deg,#27d9ff,#6c72ff);margin:5px 0 9px;transform-origin:left;animation:barpulse 2s ease-in-out infinite alternate}
+@keyframes barpulse{from{transform:scaleX(.55);opacity:.45}to{transform:scaleX(1);opacity:1}}
+.ai-label{font:700 10px monospace;letter-spacing:.25em;color:#54e3ff;text-shadow:0 0 18px rgba(84,227,255,.7)}
+
+<style>
+.ai-bot-btn{position:fixed;right:22px;bottom:22px;z-index:100;width:62px;height:62px;border-radius:50%;border:1px solid rgba(70,225,255,.5);background:radial-gradient(circle at 35% 30%,#58eaff,#1767ff 60%,#071a38);box-shadow:0 0 35px rgba(42,207,255,.35);color:white;font-weight:900;cursor:pointer;animation:botpulse 2.2s infinite}
+@keyframes botpulse{0%,100%{box-shadow:0 0 25px rgba(42,207,255,.28)}50%{box-shadow:0 0 48px rgba(42,207,255,.58)}}
+.ai-panel{position:fixed;right:22px;bottom:96px;z-index:99;width:min(390px,calc(100vw - 28px));max-height:72vh;display:none;flex-direction:column;overflow:hidden;border:1px solid rgba(69,222,255,.25);background:rgba(2,10,23,.94);backdrop-filter:blur(20px);border-radius:22px;box-shadow:0 25px 90px rgba(0,0,0,.55)}
+.ai-panel.open{display:flex}
+.ai-head{padding:16px 18px;border-bottom:1px solid rgba(100,180,255,.12);display:flex;justify-content:space-between;align-items:center}
+.ai-msgs{padding:16px;height:270px;overflow:auto;display:flex;flex-direction:column;gap:10px}
+.ai-msg{max-width:88%;padding:10px 12px;border-radius:14px;font-size:13px;line-height:1.5}
+.ai-msg.bot{align-self:flex-start;background:rgba(55,135,220,.12);border:1px solid rgba(70,190,255,.12);color:#ccecff}
+.ai-msg.user{align-self:flex-end;background:#1767ff;color:white}
+.ai-form{padding:13px;border-top:1px solid rgba(100,180,255,.12);display:grid;gap:8px}
+.ai-form input,.ai-form textarea{width:100%;background:rgba(255,255,255,.045);border:1px solid rgba(120,180,255,.14);border-radius:10px;padding:10px;color:white;outline:none;font-size:13px}
+.ai-form textarea{min-height:60px;resize:vertical}
+.ai-send{border:0;border-radius:10px;padding:10px;background:#167cff;color:white;font-weight:700;cursor:pointer}
+.ai-note{font-size:10px;color:#71829e;line-height:1.4}
+</style>
+</style>
+</head>
+<body class="grid-bg">
+
+<div class="fixed inset-0 pointer-events-none overflow-hidden">
+  <div class="orb w-96 h-96 bg-blue-600/20 -top-40 -left-40"></div>
+  <div class="orb w-96 h-96 bg-violet-600/15 top-1/3 -right-40"></div>
+</div>
+
+<header class="fixed top-0 left-0 right-0 z-50 px-4 md:px-8 py-4">
+  <nav class="glass max-w-7xl mx-auto rounded-2xl px-5 py-3 flex items-center justify-between">
+    <a href="#home" class="font-black tracking-widest text-lg">APURV<span class="text-blue-400">.</span></a>
+    <div class="desktop-nav flex gap-7 text-sm">
+      <a class="navlink" href="#about">About</a><a class="navlink" href="#skills">Skills</a>
+      <a class="navlink" href="#experience">Experience</a><a class="navlink" href="#projects">Projects</a>
+      <a class="navlink" href="#education">Education</a><a class="navlink" href="#contact">Contact</a>
+    </div>
+    <a href="mailto:apurvbagadi099@gmail.com" class="rounded-xl bg-blue-500/15 border border-blue-400/25 px-4 py-2 text-sm text-blue-200 hover:bg-blue-500/25 transition">Let's Talk</a>
+  </nav>
+</header>
+
+<main>
+<section id="home" class="relative min-h-screen overflow-hidden">
+  <div id="scene"></div><div class="scan"></div>
+<div class="hud hidden md:block">
+  <div class="ai-label">AI CORE // ONLINE</div>
+  <div class="mt-2"><b>NEURAL ENGINE</b><br>READY</div>
+  <div class="bar"></div>
+  <div><b>STACK</b> PY • JS • ML</div>
+  <div><b>MODE</b> FULL-STACK</div>
+  <div><b>STATUS</b> <span class="text-cyan-300">BUILDING</span></div>
+</div>
+
+  <div class="relative z-10 min-h-screen max-w-7xl mx-auto px-6 pt-36 pb-20 flex items-center">
+    <div class="max-w-4xl">
+      <div class="inline-flex items-center gap-2 tag rounded-full px-4 py-2 text-xs text-blue-200 mb-7 reveal">
+        <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+        B.Tech CSE • AI/ML • Full Stack
+      </div>
+      <p class="ai-label mb-4 reveal">AI / ML • SOFTWARE • FULL STACK</p>
+      <h1 class="hero-title text-6xl md:text-8xl font-black leading-[.92] tracking-tight reveal">
+        APURV<br><span class="gradient-text">BAGADI</span>
+      </h1>
+      <p class="mt-7 max-w-2xl text-lg md:text-xl leading-relaxed text-slate-300 reveal">
+        Engineering intelligent software, full-stack applications and AI/ML solutions that turn ambitious ideas into practical digital experiences.
+      </p>
+      <div class="flex flex-wrap gap-4 mt-9 reveal">
+        <a href="#projects" class="px-6 py-3 rounded-xl bg-blue-500 hover:bg-blue-400 text-white font-semibold transition">Explore Projects</a>
+        <a href="#contact" class="px-6 py-3 rounded-xl glass hover:bg-white/10 font-semibold transition">Contact Me</a>
+        <a href="Apurv_Satish_Bagadi_Resume_Fixed_ATS.pdf" download class="px-6 py-3 rounded-xl border border-slate-600 hover:border-blue-400 transition">↓ Download Resume</a>
+      </div>
+      <div class="flex flex-wrap gap-3 mt-8 reveal">
+        <span class="tag rounded-full px-3 py-1.5 text-xs text-slate-300">Python</span>
+        <span class="tag rounded-full px-3 py-1.5 text-xs text-slate-300">React</span>
+        <span class="tag rounded-full px-3 py-1.5 text-xs text-slate-300">MERN</span>
+        <span class="tag rounded-full px-3 py-1.5 text-xs text-slate-300">AI/ML</span>
+        <span class="tag rounded-full px-3 py-1.5 text-xs text-slate-300">Computer Vision</span>
+      </div>
+    </div>
+  </div>
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-xs text-slate-500 tracking-widest">SCROLL TO EXPLORE ↓</div>
+</section>
+
+<section id="about" class="max-w-7xl mx-auto px-6 py-24">
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="md:col-span-2 glass rounded-3xl p-8 md:p-10 tilt reveal">
+      <p class="text-blue-400 text-sm font-semibold tracking-widest uppercase">01 / About</p>
+      <h2 class="text-4xl font-bold mt-3">Engineer. Builder. Learner.</h2>
+      <p class="text-slate-300 leading-8 mt-6 max-w-3xl">
+        B.Tech Computer Science & Engineering student focused on software development, full-stack engineering and AI/ML.
+        Experienced in academic and prototype applications, debugging, testing, documentation and collaborative project work.
+        Interested in creating real-world technology solutions while continuously expanding technical and leadership skills.
+      </p>
+      <div class="grid sm:grid-cols-3 gap-3 mt-8">
+        <div class="tag rounded-2xl p-4"><div class="text-2xl font-bold">2026–29</div><div class="text-xs text-slate-400 mt-1">B.Tech CSE</div></div>
+        <div class="tag rounded-2xl p-4"><div class="text-2xl font-bold">8.0</div><div class="text-xs text-slate-400 mt-1">CGPA</div></div>
+        <div class="tag rounded-2xl p-4"><div class="text-2xl font-bold">3+</div><div class="text-xs text-slate-400 mt-1">Experience Roles</div></div>
+      </div>
+    </div>
+    <div class="glass rounded-3xl p-8 tilt reveal">
+      <p class="text-blue-400 text-sm font-semibold tracking-widest uppercase">Quick Info</p>
+      <div class="mt-6 space-y-5 text-sm">
+        <div><div class="text-slate-500">Based in</div><div class="font-semibold mt-1">Kolhapur, Maharashtra</div></div>
+        <div><div class="text-slate-500">Focus</div><div class="font-semibold mt-1">AI/ML • Software • Full Stack</div></div>
+        <div><div class="text-slate-500">Minor</div><div class="font-semibold mt-1">Civil Engineering</div></div>
+        <div><div class="text-slate-500">Languages</div><div class="font-semibold mt-1">English • Hindi • Marathi</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills" class="max-w-7xl mx-auto px-6 py-24">
+  <div class="mb-12 reveal"><p class="text-blue-400 text-sm font-semibold tracking-widest uppercase">02 / Skills</p><h2 class="text-4xl font-bold mt-3">My technology stack</h2></div>
+  <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+    <div class="glass rounded-3xl p-7 tilt reveal"><div class="text-3xl">⌘</div><h3 class="font-bold text-xl mt-5">Programming</h3><p class="text-slate-400 text-sm leading-7 mt-3">C, C++, Java, Python, JavaScript, OOP, DSA, problem solving.</p></div>
+    <div class="glass rounded-3xl p-7 tilt reveal"><div class="text-3xl">◈</div><h3 class="font-bold text-xl mt-5">Full Stack</h3><p class="text-slate-400 text-sm leading-7 mt-3">HTML5, CSS3, React, Node.js, Express.js, MERN, REST APIs, responsive design.</p></div>
+    <div class="glass rounded-3xl p-7 tilt reveal"><div class="text-3xl">◎</div><h3 class="font-bold text-xl mt-5">AI / Data</h3><p class="text-slate-400 text-sm leading-7 mt-3">Pandas, Scikit-learn, data analysis, machine learning, computer vision.</p></div>
+    <div class="glass rounded-3xl p-7 tilt reveal"><div class="text-3xl">⌁</div><h3 class="font-bold text-xl mt-5">Backend & Tools</h3><p class="text-slate-400 text-sm leading-7 mt-3">Flask, FastAPI, SQL, MongoDB, PostgreSQL, Firebase, Git/GitHub, testing.</p></div>
+  </div>
+</section>
+
+<section id="experience" class="max-w-7xl mx-auto px-6 py-24">
+  <div class="mb-12 reveal"><p class="text-blue-400 text-sm font-semibold tracking-widest uppercase">03 / Experience</p><h2 class="text-4xl font-bold mt-3">Experience & Leadership</h2></div>
+  <div class="max-w-4xl relative ml-2">
+    <div class="absolute left-2 top-2 bottom-2 w-px timeline-line"></div>
+    <div class="space-y-8">
+      <article class="relative pl-10 reveal"><div class="absolute left-0 top-2 w-5 h-5 rounded-full bg-blue-500 border-4 border-[#050812]"></div><div class="glass rounded-2xl p-6"><div class="flex flex-wrap justify-between gap-3"><h3 class="font-bold text-lg">CodeAlpha — AI Intern</h3><span class="text-xs text-slate-500">01 Aug 2026 – 30 Aug 2026</span></div><p class="text-blue-300 text-sm mt-1">Python • AI/ML • Software Development</p><p class="text-slate-400 mt-3 leading-7">Developed AI-based applications and automation using Python and ML-oriented tools; worked with Flask, Pandas and Scikit-learn, with debugging, testing, documentation and Git/GitHub workflow.</p></div></article>
+      <article class="relative pl-10 reveal"><div class="absolute left-0 top-2 w-5 h-5 rounded-full bg-blue-500 border-4 border-[#050812]"></div><div class="glass rounded-2xl p-6"><div class="flex flex-wrap justify-between gap-3"><h3 class="font-bold text-lg">CodSoft — Python Intern</h3><span class="text-xs text-slate-500">Jul 2026</span></div><p class="text-blue-300 text-sm mt-1">Python • Software Development</p><p class="text-slate-400 mt-3 leading-7">Built Python projects covering application and web development, testing and debugging, applying DSA, OOP, REST API and SQLite concepts.</p></div></article>
+      <article class="relative pl-10 reveal"><div class="absolute left-0 top-2 w-5 h-5 rounded-full bg-blue-500 border-4 border-[#050812]"></div><div class="glass rounded-2xl p-6"><div class="flex flex-wrap justify-between gap-3"><h3 class="font-bold text-lg">IIC DYPSN — Co-Head, Social Media Team</h3><span class="text-xs text-slate-500">2026</span></div><p class="text-blue-300 text-sm mt-1">Leadership • Social Media • Event Promotion</p><p class="text-slate-400 mt-3 leading-7">Coordinated social-media activities, event promotion, team communication and content planning.</p></div></article>
+      <article class="relative pl-10 reveal"><div class="absolute left-0 top-2 w-5 h-5 rounded-full bg-blue-500 border-4 border-[#050812]"></div><div class="glass rounded-2xl p-6"><h3 class="font-bold text-lg">CodSoft — Student Ambassador</h3><p class="text-blue-300 text-sm mt-1">Aug 2026 • Leadership • Communication</p><p class="text-slate-400 mt-3 leading-7">Supported community engagement, communication, teamwork, coordination and technical support activities.</p></div></article>
+    </div>
+  </div>
+</section>
+
+<section id="projects" class="max-w-7xl mx-auto px-6 py-24">
+  <div class="mb-12 reveal"><p class="text-blue-400 text-sm font-semibold tracking-widest uppercase">04 / Projects</p><h2 class="text-4xl font-bold mt-3">Things I've built</h2><p class="text-slate-400 mt-3">Project links can be added later.</p></div>
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div class="glass rounded-3xl p-7 tilt reveal"><span class="text-xs text-blue-300">AI / DATA</span><h3 class="text-xl font-bold mt-3">Technova AI</h3><p class="text-slate-400 text-sm mt-3 leading-6">Full-stack placement-analysis application with data processing, ML insights, web interface and API integration.</p><div class="flex flex-wrap gap-2 mt-5"><span class="tag px-2 py-1 rounded text-xs">Python</span><span class="tag px-2 py-1 rounded text-xs">Flask</span><span class="tag px-2 py-1 rounded text-xs">Scikit-learn</span></div></div>
+    <div class="glass rounded-3xl p-7 tilt reveal"><span class="text-xs text-blue-300">EDTECH</span><h3 class="text-xl font-bold mt-3">MargaDarshan</h3><p class="text-slate-400 text-sm mt-3 leading-6">Student mentoring platform featuring career guidance, dashboard, authentication, database management and placement support concepts.</p><div class="flex flex-wrap gap-2 mt-5"><span class="tag px-2 py-1 rounded text-xs">Python</span><span class="tag px-2 py-1 rounded text-xs">Streamlit</span><span class="tag px-2 py-1 rounded text-xs">SQLite</span></div></div>
+    <div class="glass rounded-3xl p-7 tilt reveal"><span class="text-xs text-blue-300">FULL STACK</span><h3 class="text-xl font-bold mt-3">ASBNOVA</h3><p class="text-slate-400 text-sm mt-3 leading-6">Full-stack service platform with React frontend, Firebase authentication/storage, AI-assisted features and deployment/testing concepts.</p><div class="flex flex-wrap gap-2 mt-5"><span class="tag px-2 py-1 rounded text-xs">React</span><span class="tag px-2 py-1 rounded text-xs">Firebase</span><span class="tag px-2 py-1 rounded text-xs">JavaScript</span></div></div>
+    <div class="glass rounded-3xl p-7 tilt reveal"><span class="text-xs text-blue-300">AI CAREER</span><h3 class="text-xl font-bold mt-3">SkillRise</h3><p class="text-slate-400 text-sm mt-3 leading-6">Career platform concept combining skill tracking and multilingual AI mentoring in Hindi, Marathi and English.</p><div class="flex flex-wrap gap-2 mt-5"><span class="tag px-2 py-1 rounded text-xs">MERN</span><span class="tag px-2 py-1 rounded text-xs">Python</span><span class="tag px-2 py-1 rounded text-xs">AI</span></div></div>
+    <div class="glass rounded-3xl p-7 tilt reveal"><span class="text-xs text-blue-300">CYBERSECURITY</span><h3 class="text-xl font-bold mt-3">CyberRakshak</h3><p class="text-slate-400 text-sm mt-3 leading-6">Cybersecurity prototype for malicious URL, email and file detection using risk scoring and explainable AI.</p><div class="flex flex-wrap gap-2 mt-5"><span class="tag px-2 py-1 rounded text-xs">FastAPI</span><span class="tag px-2 py-1 rounded text-xs">XGBoost</span><span class="tag px-2 py-1 rounded text-xs">SHAP</span></div></div>
+    <div class="glass rounded-3xl p-7 tilt reveal"><span class="text-xs text-blue-300">C / DSA</span><h3 class="text-xl font-bold mt-3">Chess Game</h3><p class="text-slate-400 text-sm mt-3 leading-6">Two-player chess game implementing game logic, board operations and object-oriented programming concepts.</p><div class="flex flex-wrap gap-2 mt-5"><span class="tag px-2 py-1 rounded text-xs">C</span><span class="tag px-2 py-1 rounded text-xs">DSA</span><span class="tag px-2 py-1 rounded text-xs">OOP</span></div></div>
+  </div>
+</section>
+
+<section id="education" class="max-w-7xl mx-auto px-6 py-24">
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="glass rounded-3xl p-8 reveal">
+      <p class="text-blue-400 text-sm font-semibold tracking-widest uppercase">05 / Education</p>
+      <h2 class="text-3xl font-bold mt-3">B.Tech CSE</h2>
+      <p class="text-slate-300 mt-4">D. Y. Patil Pratishthan's College of Engineering, Salokhenagar, Kolhapur</p>
+      <p class="text-slate-500 mt-2">Shivaji University • 2026–2029</p>
+      <div class="flex flex-wrap gap-2 mt-6"><span class="tag rounded-full px-3 py-1 text-xs">Minor: Civil</span><span class="tag rounded-full px-3 py-1 text-xs">CGPA: 8.0</span></div>
+      <p class="text-slate-400 text-sm mt-6 leading-7">Relevant coursework: Data Structures & Algorithms, OOP, DBMS, Operating Systems, Computer Networks, Software Engineering and Web Technologies.</p>
+    </div>
+    <div class="glass rounded-3xl p-8 reveal">
+      <p class="text-blue-400 text-sm font-semibold tracking-widest uppercase">06 / Certifications</p>
+      <div class="mt-6 space-y-5">
+        <div class="tag rounded-2xl p-5"><div class="font-bold">NPTEL</div><div class="text-sm text-slate-400 mt-1">Python for Data Science</div></div>
+        <div class="tag rounded-2xl p-5"><div class="font-bold">IBM</div><div class="text-sm text-slate-400 mt-1">Python 101 for Data Science</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="max-w-7xl mx-auto px-6 py-24">
+  <div class="glass rounded-[2rem] p-8 md:p-14 text-center reveal">
+    <p class="text-blue-400 text-sm font-semibold tracking-widest uppercase">07 / Contact</p>
+    <h2 class="text-4xl md:text-6xl font-black mt-4">Let's build something<br><span class="gradient-text">intelligent.</span></h2>
+    <p class="text-slate-400 max-w-2xl mx-auto mt-5">Open to internship opportunities, software development, full-stack, web/application development and AI/ML projects.</p>
+    <div class="flex flex-wrap justify-center gap-4 mt-8">
+      <a href="mailto:apurvbagadi099@gmail.com" class="px-6 py-3 rounded-xl bg-blue-500 hover:bg-blue-400 font-semibold transition">Email Me</a>
+      <a href="tel:+917247316906" class="px-6 py-3 rounded-xl glass hover:bg-white/10 transition">+91 7247316906</a>
+      <a href="https://github.com/Apurvbagadi" target="_blank" class="px-6 py-3 rounded-xl glass hover:bg-white/10 transition">GitHub ↗</a>
+      <a href="https://www.linkedin.com/in/apurv-bagadi-b1172538a/" target="_blank" class="px-6 py-3 rounded-xl glass hover:bg-white/10 transition">LinkedIn ↗</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="max-w-7xl mx-auto px-6 py-8 text-center text-xs text-slate-600">
+  © 2026 Apurv Satish Bagadi • 3D AI developer portfolio • futuristic interface
+</footer>
+
+<script>
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, .1, 100);
+camera.position.z = 6;
+const renderer = new THREE.WebGLRenderer({alpha:true,antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth,innerHeight);
+document.getElementById('scene').appendChild(renderer.domElement);
+
+const group = new THREE.Group(); scene.add(group);
+const geo = new THREE.IcosahedronGeometry(1.45,2);
+const mat = new THREE.MeshBasicMaterial({color:0x39dfff,wireframe:true,transparent:true,opacity:.48});
+const mesh = new THREE.Mesh(geo,mat); group.add(mesh);
+
+const points = new THREE.BufferGeometry();
+const arr=[]; for(let i=0;i<850;i++){arr.push((Math.random()-.5)*12,(Math.random()-.5)*8,(Math.random()-.5)*6)}
+points.setAttribute('position',new THREE.Float32BufferAttribute(arr,3));
+const pm = new THREE.PointsMaterial({color:0x8fc7ff,size:.018,transparent:true,opacity:.7});
+const stars = new THREE.Points(points,pm); scene.add(stars);
+
+const ring1 = new THREE.Mesh(new THREE.TorusGeometry(2.0,.012,12,120),new THREE.MeshBasicMaterial({color:0x39dfff,transparent:true,opacity:.65}));
+const ring2 = new THREE.Mesh(new THREE.TorusGeometry(2.35,.008,12,120),new THREE.MeshBasicMaterial({color:0x6677ff,transparent:true,opacity:.45}));
+ring1.rotation.x=1.15; ring2.rotation.x=.7; group.add(ring1,ring2);
+
+let mx=0,my=0;
+addEventListener('mousemove',e=>{mx=(e.clientX/innerWidth-.5)*.5;my=(e.clientY/innerHeight-.5)*.3});
+function animate(){
+ requestAnimationFrame(animate);
+ group.rotation.y += .0025; group.rotation.x += .001;
+ ring1.rotation.z += .004; ring2.rotation.z -= .003;
+ group.rotation.y += (mx-group.rotation.y)*.002;
+ group.position.x += (mx*.5-group.position.x)*.02;
+ group.position.y += (-my*.4-group.position.y)*.02;
+ stars.rotation.y += .00025;
+ renderer.render(scene,camera);
+}
+animate();
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+
+document.querySelectorAll('.tilt').forEach(el=>{
+ el.addEventListener('mousemove',e=>{
+   const r=el.getBoundingClientRect(), x=e.clientX-r.left, y=e.clientY-r.top;
+   const rx=(y/r.height-.5)*-7, ry=(x/r.width-.5)*7;
+   el.style.transform=`perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-3px)`;
+ });
+ el.addEventListener('mouseleave',()=>el.style.transform='');
+});
+const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show')}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(x=>io.observe(x));
+</script>
+
+<button id="aiBotBtn" class="ai-bot-btn" aria-label="Open AI Recruiter Assistant">AI</button>
+<section id="aiPanel" class="ai-panel" aria-label="AI Recruiter Assistant">
+  <div class="ai-head">
+    <div>
+      <div class="ai-label">RECRUITER AI // ONLINE</div>
+      <div class="font-bold text-sm mt-1">Apurv's HR Assistant</div>
+    </div>
+    <button id="aiClose" class="text-slate-400 hover:text-white text-xl">×</button>
+  </div>
+  <div id="aiMsgs" class="ai-msgs">
+    <div class="ai-msg bot">Hello! I'm Apurv's AI recruiter assistant. I can help HR/recruiters learn about his skills, experience and projects, and I can record your professional details for follow-up.</div>
+    <div class="ai-msg bot">Please leave your details below if you'd like to discuss an internship, job, interview, collaboration or project.</div>
+  </div>
+  <form id="aiForm" class="ai-form">
+    <input id="hrName" required placeholder="HR / Recruiter name">
+    <input id="hrCompany" required placeholder="Company / Organization">
+    <input id="hrEmail" type="email" required placeholder="Professional email">
+    <input id="hrPhone" placeholder="Phone / LinkedIn (optional)">
+    <input id="hrRole" placeholder="Role / Opportunity">
+    <textarea id="hrMessage" placeholder="Message or hiring requirement"></textarea>
+    <button class="ai-send" type="submit">Send recruiter details →</button>
+    <div class="ai-note">Details are saved locally in this browser. For real HR lead delivery to Apurv, connect this form to an email/database service before publishing.</div>
+  </form>
+</section>
+
+<script>
+(function(){
+ const btn=document.getElementById('aiBotBtn'),panel=document.getElementById('aiPanel'),close=document.getElementById('aiClose'),form=document.getElementById('aiForm'),msgs=document.getElementById('aiMsgs');
+ btn.onclick=()=>panel.classList.toggle('open'); close.onclick=()=>panel.classList.remove('open');
+ form.addEventListener('submit',e=>{
+   e.preventDefault();
+   const lead={
+     name:hrName.value.trim(),company:hrCompany.value.trim(),email:hrEmail.value.trim(),
+     phone:hrPhone.value.trim(),role:hrRole.value.trim(),message:hrMessage.value.trim(),
+     timestamp:new Date().toISOString()
+   };
+   const leads=JSON.parse(localStorage.getItem('apurv_hr_leads')||'[]');
+   leads.push(lead); localStorage.setItem('apurv_hr_leads',JSON.stringify(leads));
+   const bubble=document.createElement('div'); bubble.className='ai-msg user'; bubble.textContent='Recruiter details submitted.';
+   msgs.appendChild(bubble);
+   const reply=document.createElement('div'); reply.className='ai-msg bot';
+   reply.textContent='Thank you, '+lead.name+'. Your professional details have been recorded on this device. Apurv can follow up using the contact information provided.';
+   msgs.appendChild(reply); msgs.scrollTop=msgs.scrollHeight; form.reset();
+ });
+})();
+</script>
+</body>
+</html>
